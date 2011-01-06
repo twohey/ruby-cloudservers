@@ -83,7 +83,7 @@ See the class definitions for documentation on specific methods and operations.
 
 == Authors
 
-By H. Wade Minter <wade.minter@rackspace.com> and Mike Mayo <mike.mayo@rackspace.com>
+By H. Wade Minter <minter@lunenburg.org>, Mike Mayo <mike.mayo@rackspace.com>, and Dan Prince <dan.prince@rackspace.com>
 
 == License
 
