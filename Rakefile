@@ -9,7 +9,7 @@ begin
     gemspec.summary = "Rackspace Cloud Servers Ruby API"
     gemspec.description = "A Ruby API to version 1.0 of the Rackspace Cloud Servers product."
     gemspec.email = "minter@lunenburg.org"
-    gemspec.homepage = "http://github.com/rackspace/cloudservers"
+    gemspec.homepage = "https://github.com/rackspace/ruby-cloudservers"
     gemspec.authors = ["H. Wade Minter","Mike Mayo", "Dan Prince"]
     gemspec.add_dependency 'json'
   end
