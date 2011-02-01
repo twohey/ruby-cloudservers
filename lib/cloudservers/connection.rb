@@ -150,8 +150,10 @@ module CloudServers
     # API level.
     #
     # The "Personality" option allows you to include up to five files, of 10Kb or less in size, that will be placed on the created server.
-    # For :personality, pass a hash of the form {'local_path' => 'server_path'}.  The file located at local_path will be base64-encoded
-    # and placed at the location identified by server_path on the new server.
+    # For :personality, you may pass either
+    # a. a hash of the form {'local_path' => 'server_path'}.  The file contents of the file located at local_path will
+    #    be placed at the location identified by server_path on the new server.
+    # b. an array of items like {:path => "/path/on/server", :contents=>"contents of file on server"}
     #
     # Returns a CloudServers::Server object.  The root password is available in the adminPass instance method.
     #
@@ -339,17 +341,32 @@ module CloudServers
       return if options.nil?
       require 'base64'
       data = []
-      itemcount = 0
-      options.each do |localpath,svrpath|
-        raise CloudServers::Exception::TooManyPersonalityItems, "Personality files are limited to a total of #{MAX_PERSONALITY_ITEMS} items" if itemcount >= MAX_PERSONALITY_ITEMS
-        raise CloudServers::Exception::PersonalityFilePathTooLong, "Server-side path of #{svrpath} exceeds the maximum length of #{MAX_SERVER_PATH_LENGTH} characters" if svrpath.size > MAX_SERVER_PATH_LENGTH
-        raise CloudServers::Exception::PersonalityFileTooLarge, "Local file #{localpath} exceeds the maximum size of #{MAX_PERSONALITY_FILE_SIZE} bytes" if File.size(localpath) > MAX_PERSONALITY_FILE_SIZE
-        b64 = Base64.encode64(IO.read(localpath))
-        data.push({:path => svrpath, :contents => b64})
-        itemcount += 1
+      # transform simplified personality option
+      if options.is_a? Hash
+        options.each_pair do |localpath, svrpath|
+          data.push(:path => svrpath, :contents => IO.read(localpath))
+        end
+      else
+        data = options
       end
-      return data
-    end
+
+      if data.size >= MAX_PERSONALITY_ITEMS
+        raise CloudServers::Exception::TooManyPersonalityItems,
+              "Personality files are limited to a total of #{MAX_PERSONALITY_ITEMS} items"
+      end
+      data.each do |item|
+        path = item[:path]
+        contents = item[:contents]
+        if contents.size > MAX_PERSONALITY_FILE_SIZE
+          raise CloudServers::Exception::PersonalityFileTooLarge,
+                "Data for #{path} exceeds the maximum size of #{MAX_PERSONALITY_FILE_SIZE} bytes"
+        elsif path.size > MAX_SERVER_PATH_LENGTH
+          raise CloudServers::Exception::PersonalityFilePathTooLong,
+                "Server-side path of #{path} exceeds the maximum length of #{MAX_SERVER_PATH_LENGTH} characters"
         
+        end
+        item[:contents] = Base64.encode64(contents)
+      end
+    end
   end
 end
