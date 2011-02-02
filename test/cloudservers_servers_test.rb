@@ -1,7 +1,33 @@
 $:.unshift File.dirname(__FILE__)
 require 'test_helper'
+require 'tempfile'
 
 class CloudServersServersTest < Test::Unit::TestCase
+
+CREATE_SERVER_JSON = %{{
+  "server" : {
+      "id" : 1234,
+      "name" : "sample-server",
+      "imageId" : 2,
+      "flavorId" : 1,
+      "hostId" : "e4d909c290d0fb1ca068ffaddf22cbd0",
+      "adminPass" : "blah",
+      "status" : "BUILD",
+      "progress" : 60,
+      "addresses" : {
+          "public" : [
+               "67.23.10.132"
+          ],
+          "private" : [
+               "10.176.42.16"
+          ]
+      },
+      "metadata" : {
+          "Racker" : "Fanatical"
+      }
+  }
+}}
+
 
   include TestConnection
 
@@ -132,6 +158,75 @@ json_response = %{{
 
     assert_raises(CloudServers::Exception::MissingArgument) do
       assert server.share_ip({})
+    end
+
+  end
+
+  def test_create_server_requires_name
+
+    assert_raises(CloudServers::Exception::MissingArgument) do
+        @conn.create_server(:imageId => 2, :flavorId => 2)
+    end
+
+  end
+
+  def test_create_server_requires_image_id
+
+    assert_raises(CloudServers::Exception::MissingArgument) do
+        @conn.create_server(:name => "test1", :flavorId => 2)
+    end
+
+  end
+
+  def test_create_server_requires_flavor_id
+
+    assert_raises(CloudServers::Exception::MissingArgument) do
+        @conn.create_server(:name => "test1", :imageId => 2)
+    end
+
+  end
+
+  def test_create_server_with_local_file_personality
+
+    response = mock()
+    response.stubs(:code => "200", :body => CREATE_SERVER_JSON)
+    @conn.stubs(:csreq).returns(response)
+
+    tmp = Tempfile.open('ruby_cloud_servers')
+    tmp.write("hello")
+    tmp.flush
+
+    server = @conn.create_server(:name => "sample-server", :imageId => 2, :flavorId => 2, :metadata => {'Racker' => 'Fanatical'}, :personality => {tmp.path => '/root/tmp.jpg'})
+
+    assert_equal "blah", server.adminPass
+
+  end
+
+  def test_create_server_with_personalities
+
+    response = mock()
+    response.stubs(:code => "200", :body => CREATE_SERVER_JSON)
+    @conn.stubs(:csreq).returns(response)
+
+    server = @conn.create_server(:name => "sample-server", :imageId => 2, :flavorId => 2, :metadata => {'Racker' => 'Fanatical'}, :personality => [{:path => '/root/hello.txt', :contents => "Hello there!"}, {:path => '/root/.ssh/authorized_keys', :contents => ""}])
+
+    assert_equal "blah", server.adminPass
+
+  end
+
+  def test_too_many_personalities
+
+    personalities=[
+        {:path => "/tmp/test1.txt", :contents => ""},
+        {:path => "/tmp/test2.txt", :contents => ""},
+        {:path => "/tmp/test3.txt", :contents => ""},
+        {:path => "/tmp/test4.txt", :contents => ""},
+        {:path => "/tmp/test5.txt", :contents => ""},
+        {:path => "/tmp/test6.txt", :contents => ""}
+    ]
+
+    assert_raises(CloudServers::Exception::TooManyPersonalityItems) do
+        @conn.create_server(:name => "sample-server", :imageId => 2, :flavorId => 2, :metadata => {'Racker' => 'Fanatical'}, :personality => personalities)
     end
 
   end

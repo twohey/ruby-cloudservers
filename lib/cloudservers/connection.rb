@@ -331,7 +331,7 @@ module CloudServers
           end
           @http[server].start
         rescue
-          raise ConnectionException, "Unable to connect to #{server}"
+          raise CloudServers::Exception::ConnectionException, "Unable to connect to #{server}"
         end
       end
     end
@@ -350,7 +350,7 @@ module CloudServers
         data = options
       end
 
-      if data.size >= MAX_PERSONALITY_ITEMS
+      if data.size > MAX_PERSONALITY_ITEMS
         raise CloudServers::Exception::TooManyPersonalityItems,
               "Personality files are limited to a total of #{MAX_PERSONALITY_ITEMS} items"
       end
