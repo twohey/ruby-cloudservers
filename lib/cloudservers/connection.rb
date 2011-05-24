@@ -86,7 +86,7 @@ module CloudServers
       retry
     rescue CloudServers::Exception::ExpiredAuthToken
       raise CloudServers::Exception::Connection, "Authentication token expired and you have requested not to retry" if @retry_auth == false
-      CloudFiles::Authentication.new(self)
+      CloudServers::Authentication.new(self)
       retry
     end
     
