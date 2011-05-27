@@ -20,7 +20,6 @@ module CloudServers
   AUTH_USA = "https://auth.api.rackspacecloud.com"
   AUTH_UK = "https://lon.auth.api.rackspacecloud.com"
 
-  VERSION = IO.read(File.dirname(__FILE__) + '/../VERSION')
   require 'net/http'
   require 'net/https'
   require 'uri'
@@ -34,6 +33,7 @@ module CloudServers
   end
 
   $:.unshift(File.dirname(__FILE__))
+  require 'cloudservers/version'
   require 'cloudservers/authentication'
   require 'cloudservers/connection'
   require 'cloudservers/server'
