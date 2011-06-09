@@ -331,7 +331,7 @@ module CloudServers
           end
           @http[server].start
         rescue
-          raise CloudServers::Exception::ConnectionException, "Unable to connect to #{server}"
+          raise CloudServers::Exception::Connection, "Unable to connect to #{server}"
         end
       end
     end
