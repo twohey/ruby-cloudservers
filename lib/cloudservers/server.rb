@@ -10,7 +10,6 @@ module CloudServers
     attr_reader   :hostId
     attr_reader   :imageId
     attr_reader   :flavorId
-    attr_reader   :metadata
     attr_accessor :adminPass
     
     # This class is the representation of a single Cloud Server object.  The constructor finds the server identified by the specified
@@ -54,7 +53,6 @@ module CloudServers
       @hostId    = data["hostId"]
       @imageId   = data["imageId"]
       @flavorId  = data["flavorId"]
-      @metadata  = data["metadata"]
       true
     end
     alias :refresh :populate
