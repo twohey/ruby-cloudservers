@@ -4,31 +4,6 @@ require 'tempfile'
 
 class CloudServersServersTest < Test::Unit::TestCase
 
-CREATE_SERVER_JSON = %{{
-  "server" : {
-      "id" : 1234,
-      "name" : "sample-server",
-      "imageId" : 2,
-      "flavorId" : 1,
-      "hostId" : "e4d909c290d0fb1ca068ffaddf22cbd0",
-      "adminPass" : "blah",
-      "status" : "BUILD",
-      "progress" : 60,
-      "addresses" : {
-          "public" : [
-               "67.23.10.132"
-          ],
-          "private" : [
-               "10.176.42.16"
-          ]
-      },
-      "metadata" : {
-          "Racker" : "Fanatical"
-      }
-  }
-}}
-
-
   include TestConnection
 
   def setup
@@ -37,53 +12,8 @@ CREATE_SERVER_JSON = %{{
   
   def test_list_servers
 
-json_response = %{{
-  "servers" : [
-      {
-     "id" : 1234,
-      "name" : "sample-server",
-      "imageId" : 2,
-      "flavorId" : 1,
-      "hostId" : "e4d909c290d0fb1ca068ffaddf22cbd0",
-      "status" : "BUILD",
-      "progress" : 60,
-      "addresses" : {
-          "public" : [
-              "67.23.10.132",
-              "67.23.10.131"
-          ],
-          "private" : [
-              "10.176.42.16"
-          ]
-      },
-      "metadata" : {
-          "Server Label" : "Web Head 1",
-          "Image Version" : "2.1"
-      }
-      },
-      {
-    "id" : 5678,
-      "name" : "sample-server2",
-      "imageId" : 2,
-      "flavorId" : 1,
-      "hostId" : "9e107d9d372bb6826bd81d3542a419d6",
-      "status" : "ACTIVE",
-      "addresses" : {
-          "public" : [
-              "67.23.10.133"
-          ],
-          "private" : [
-              "10.176.42.17"
-          ]
-      },
-      "metadata" : {
-          "Server Label" : "DB 1"
-      }
-      }
-  ]
-}}
     response = mock()
-    response.stubs(:code => "200", :body => json_response)
+    response.stubs(:code => "200", :body => fixture('list_servers.json'))
 
     @conn.stubs(:csreq).returns(response)
     servers=@conn.list_servers
@@ -189,7 +119,7 @@ json_response = %{{
   def test_create_server_with_local_file_personality
 
     response = mock()
-    response.stubs(:code => "200", :body => CREATE_SERVER_JSON)
+    response.stubs(:code => "200", :body => fixture('create_server.json'))
     @conn.stubs(:csreq).returns(response)
 
     tmp = Tempfile.open('ruby_cloud_servers')
@@ -205,7 +135,7 @@ json_response = %{{
   def test_create_server_with_personalities
 
     response = mock()
-    response.stubs(:code => "200", :body => CREATE_SERVER_JSON)
+    response.stubs(:code => "200", :body => fixture('create_server.json'))
     @conn.stubs(:csreq).returns(response)
 
     server = @conn.create_server(:name => "sample-server", :imageId => 2, :flavorId => 2, :metadata => {'Racker' => 'Fanatical'}, :personality => [{:path => '/root/hello.txt', :contents => "Hello there!"}, {:path => '/root/.ssh/authorized_keys', :contents => ""}])
@@ -234,33 +164,8 @@ json_response = %{{
 private
   def get_test_server
 
-json_response = %{{
-  "server" : {
-      "id" : 1234,
-      "name" : "sample-server",
-      "imageId" : 2,
-      "flavorId" : 1,
-      "hostId" : "e4d909c290d0fb1ca068ffaddf22cbd0",
-      "status" : "BUILD",
-      "progress" : 60,
-      "addresses" : {
-          "public" : [
-               "67.23.10.132",
-               "67.23.10.131"
-          ],
-          "private" : [
-               "10.176.42.16"
-          ]
-      },
-      "metadata" : {
-          "Server Label" : "Web Head 1",
-          "Image Version" : "2.1"
-      }
-  }
-}}
-
     response = mock()
-    response.stubs(:code => "200", :body => json_response)
+    response.stubs(:code => "200", :body => fixture('test_server.json'))
 
     @conn=get_test_connection
 
