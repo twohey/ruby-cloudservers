@@ -1,0 +1,23 @@
+{
+  "server" : {
+      "id" : 1234,
+      "name" : "sample-server",
+      "imageId" : 2,
+      "flavorId" : 1,
+      "hostId" : "e4d909c290d0fb1ca068ffaddf22cbd0",
+      "adminPass" : "blah",
+      "status" : "BUILD",
+      "progress" : 60,
+      "addresses" : {
+          "public" : [
+               "67.23.10.132"
+          ],
+          "private" : [
+               "10.176.42.16"
+          ]
+      },
+      "metadata" : {
+          "Racker" : "Fanatical"
+      }
+  }
+}
