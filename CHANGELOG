@@ -1,4 +1,12 @@
 ================================================================================
+ 0.4.2 (2012/01/13)
+================================================================================
+  o Test fixtures.
+  o Fix issue with paths, applicable for ruby 1.9.
+  o Change ConnectionException to Connection.
+  o Accept all 20x status codes to support OpenStack.
+
+================================================================================
  0.4.1 (2011/02/02)
 ================================================================================
   o Support creation of personalities without using the local filesystem.
