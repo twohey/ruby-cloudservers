@@ -41,7 +41,8 @@ module CloudServers
     #  >> server.refresh
     #  => true
     def populate
-      response = @connection.csreq("GET",@svrmgmthost,"#{@svrmgmtpath}/servers/#{URI.encode(@id.to_s)}",@svrmgmtport,@svrmgmtscheme)
+      anti_cache_param="cacheid=#{Time.now.to_i}"
+      response = @connection.csreq("GET",@svrmgmthost,"#{@svrmgmtpath}/servers/#{URI.encode(@id.to_s)}?#{anti_cache_param}",@svrmgmtport,@svrmgmtscheme)
       CloudServers::Exception.raise_exception(response) unless response.code.match(/^20.$/)
       data = JSON.parse(response.body)["server"]
       @id        = data["id"]
