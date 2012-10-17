@@ -132,7 +132,8 @@ module CloudServers
     #   => [{:status=>"ACTIVE", :imageId=>10, :progress=>100, :metadata=>{}, :addresses=>{:public=>["x.x.x.x"], :private=>["x.x.x.x"]}, :name=>"demo-standingcloud-lts", :id=>168867, :flavorId=>1, :hostId=>"xxxxxx"}, 
     #       {:status=>"ACTIVE", :imageId=>8, :progress=>100, :metadata=>{}, :addresses=>{:public=>["x.x.x.x"], :private=>["x.x.x.x"]}, :name=>"demo-aicache1", :id=>187853, :flavorId=>3, :hostId=>"xxxxxx"}]
     def list_servers_detail(options = {})
-      path = CloudServers.paginate(options).empty? ? "#{svrmgmtpath}/servers/detail" : "#{svrmgmtpath}/servers/detail?#{CloudServers.paginate(options)}"
+      anti_cache_param="cacheid=#{Time.now.to_i}"
+      path = CloudServers.paginate(options).empty? ? "#{svrmgmtpath}/servers/detail?#{anti_cache_param}" : "#{svrmgmtpath}/servers/detail?#{CloudServers.paginate(options)}&#{anti_cache_param}"
       response = csreq("GET",svrmgmthost,path,svrmgmtport,svrmgmtscheme)
       CloudServers::Exception.raise_exception(response) unless response.code.match(/^20.$/)
       CloudServers.symbolize_keys(JSON.parse(response.body)["servers"])
