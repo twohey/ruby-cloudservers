@@ -1,5 +1,11 @@
 = Rackspace Cloud Servers
 
+== Changes
+
+Since Rackspace no longer seems interested in maintaining their source code, and their API has serious caching issues, this fork is an attempt to accumulate in one place all the changes I need to make small projects work.
+
+
+
 == Description
 
 This is a Ruby interface into the Rackspace[http://rackspacecloud.com/] {Cloud Servers}[http://www.rackspacecloud.com/cloud_hosting_products/servers] service. Cloud Servers from The Rackspace Cloud put you in complete control of your hosting infrastructure. Each Cloud Server is a fully-customizable, pay by the hour, virtualized Windows or Linux server instance that you launch, maintain, and control with full root access.
