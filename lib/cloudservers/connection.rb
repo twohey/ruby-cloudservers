@@ -71,7 +71,7 @@ module CloudServers
     def csreq(method,server,path,port,scheme,headers = {},data = nil,attempts = 0) # :nodoc:
       start = Time.now
       hdrhash = headerprep(headers)
-      start_http(server,path,port,scheme,hdrhash)
+      start_http(server,path + "?cache_bust=#{Time.now.to_i}",port,scheme,hdrhash)
       request = Net::HTTP.const_get(method.to_s.capitalize).new(path,hdrhash)
       request.body = data
       response = @http[server].request(request)
@@ -193,7 +193,7 @@ module CloudServers
     #       {:status=>"ACTIVE", :name=>"CentOS 5.3", :updated=>"2009-08-26T14:59:52-05:00", :id=>7}, 
     #       {:status=>"ACTIVE", :name=>"CentOS 5.4", :updated=>"2009-12-16T01:02:17-06:00", :id=>187811}]
     def list_images(options = {})
-      path = CloudServers.paginate(options).empty? ? "#{svrmgmtpath}/images/detail" : "#{svrmgmtpath}/images/detail?#{CloudServers.paginate(options)}"
+      path = CloudServers.paginate(options).empty? ? "#{svrmgmtpath}/images/detail?cache_bust=#{Time.now.to_i}" : "#{svrmgmtpath}/images/detail?#{CloudServers.paginate(options)}"
       response = csreq("GET",svrmgmthost,path,svrmgmtport,svrmgmtscheme)
       CloudServers::Exception.raise_exception(response) unless response.code.match(/^20.$/)
       CloudServers.symbolize_keys(JSON.parse(response.body)['images'])

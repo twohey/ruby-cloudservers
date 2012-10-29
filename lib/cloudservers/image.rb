@@ -31,7 +31,7 @@ module CloudServers
     #   >> image.populate
     #   => true
     def populate
-      response = @connection.csreq("GET",@connection.svrmgmthost,"#{@connection.svrmgmtpath}/images/#{URI.escape(self.id.to_s)}",@connection.svrmgmtport,@connection.svrmgmtscheme)
+      response = @connection.csreq("GET",@connection.svrmgmthost,"#{@connection.svrmgmtpath}/images/#{URI.escape(self.id.to_s)}?cache_bust=#{Time.now.to_i}",@connection.svrmgmtport,@connection.svrmgmtscheme)
       CloudServers::Exception.raise_exception(response) unless response.code.match(/^20.$/)
       data = JSON.parse(response.body)['image']
       @id = data['id']
