@@ -1,5 +1,8 @@
 = Rackspace Cloud Servers
 
+== UNMAINTAINED
+In 2014 Rackspace officially deprecated the parent repository, so I'm marking this repo as unmaintained and archiving it.
+
 == Changes
 
 Since Rackspace no longer seems interested in maintaining their source code, and their API has serious caching issues, this fork is an attempt to accumulate in one place all the changes I need to make small projects work.
